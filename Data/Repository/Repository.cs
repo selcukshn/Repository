@@ -59,17 +59,19 @@ namespace Data.Repository
             await Entity.OrderBy(order).AsNoTracking().ToListAsync() :
             await Entity.OrderByDescending(order).AsNoTracking().ToListAsync();
         }
-        public async Task<ICollection<TEntity>> GetAllAsync<TProperty>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProperty>> order, OrderType orderType = OrderType.ASC) where TProperty : class
-        {
-            return orderType == OrderType.ASC ?
-            await EntityFilter(filter).OrderBy(order).AsNoTracking().ToListAsync() :
-            await EntityFilter(filter).OrderByDescending(order).AsNoTracking().ToListAsync();
-        }
+        public async Task<ICollection<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter, int size) =>
+            await EntityFilter(filter).Take(size).AsNoTracking().ToListAsync();
         public async Task<ICollection<TEntity>> GetAllAsync<TProperty>(Expression<Func<TEntity, TProperty>> order, int size, OrderType orderType = OrderType.ASC) where TProperty : class
         {
             return orderType == OrderType.ASC ?
             await Entity.OrderBy(order).Take(size).AsNoTracking().ToListAsync() :
             await Entity.OrderByDescending(order).Take(size).AsNoTracking().ToListAsync();
+        }
+        public async Task<ICollection<TEntity>> GetAllAsync<TProperty>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProperty>> order, OrderType orderType = OrderType.ASC) where TProperty : class
+        {
+            return orderType == OrderType.ASC ?
+            await EntityFilter(filter).OrderBy(order).AsNoTracking().ToListAsync() :
+            await EntityFilter(filter).OrderByDescending(order).AsNoTracking().ToListAsync();
         }
         public async Task<ICollection<TEntity>> GetAllAsync<TProperty>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProperty>> order, int size, OrderType orderType = OrderType.ASC) where TProperty : class
         {
@@ -89,17 +91,19 @@ namespace Data.Repository
             await EntityWithIncluded(include).OrderBy(order).AsNoTracking().ToListAsync() :
             await EntityWithIncluded(include).OrderByDescending(order).AsNoTracking().ToListAsync();
         }
-        public async Task<ICollection<TEntity>> GetAllWithIncludeAsync<TProperty>(Expression<Func<TEntity, TProperty>> include, Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProperty>> order, OrderType orderType = OrderType.ASC) where TProperty : class
-        {
-            return orderType == OrderType.ASC ?
-            await EntityWithIncluded(include).Where(filter).OrderBy(order).AsNoTracking().ToListAsync() :
-            await EntityWithIncluded(include).Where(filter).OrderByDescending(order).AsNoTracking().ToListAsync();
-        }
+        public async Task<ICollection<TEntity>> GetAllWithIncludeAsync<TProperty>(Expression<Func<TEntity, TProperty>> include, Expression<Func<TEntity, bool>> filter, int size) where TProperty : class =>
+            await EntityWithIncluded(include).Where(filter).Take(size).AsNoTracking().ToListAsync();
         public async Task<ICollection<TEntity>> GetAllWithIncludeAsync<TProperty>(Expression<Func<TEntity, TProperty>> include, Expression<Func<TEntity, TProperty>> order, int size, OrderType orderType = OrderType.ASC) where TProperty : class
         {
             return orderType == OrderType.ASC ?
             await EntityWithIncluded(include).OrderBy(order).Take(size).AsNoTracking().ToListAsync() :
             await EntityWithIncluded(include).OrderByDescending(order).Take(size).AsNoTracking().ToListAsync();
+        }
+        public async Task<ICollection<TEntity>> GetAllWithIncludeAsync<TProperty>(Expression<Func<TEntity, TProperty>> include, Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProperty>> order, OrderType orderType = OrderType.ASC) where TProperty : class
+        {
+            return orderType == OrderType.ASC ?
+            await EntityWithIncluded(include).Where(filter).OrderBy(order).AsNoTracking().ToListAsync() :
+            await EntityWithIncluded(include).Where(filter).OrderByDescending(order).AsNoTracking().ToListAsync();
         }
         public async Task<ICollection<TEntity>> GetAllWithIncludeAsync<TProperty>(Expression<Func<TEntity, TProperty>> include, Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProperty>> order, int size, OrderType orderType = OrderType.ASC) where TProperty : class
         {
