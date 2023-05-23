@@ -1,7 +1,3 @@
 bin/
 obj/
 .vscode/
-Business/
-Common/
-UI/
-*.csproj

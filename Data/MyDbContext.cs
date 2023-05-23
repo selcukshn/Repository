@@ -1,8 +1,7 @@
-using Common;
-using Data.Entity;
 using Microsoft.EntityFrameworkCore;
+using Repository.Data.Entity;
 
-namespace Data
+namespace Repository.Data
 {
     public class MyDbContext : DbContext
     {
@@ -11,32 +10,27 @@ namespace Data
         protected override void OnConfiguring(DbContextOptionsBuilder config)
         {
             if (!config.IsConfigured)
-                config.UseSqlServer(StringConstant.SqlConnection);
+                config.UseSqlServer("server=SELCUK\\SQLEXPRESS;initial catalog=RepositoryTest;integrated security=true;");
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Product>(entity =>
+            var users = new List<User>();
+            for (int i = 0; i < 25; i++)
             {
-                entity.Property(x => x.Id).UseIdentityColumn();
-                entity.HasOne(x => x.Category).WithMany(x => x.Products).HasForeignKey(x => x.CategoryId);
+                users.Add(new User
+                {
+                    Id = Guid.NewGuid(),
+                    Name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 20).Select(s => s[new Random().Next(s.Length)]).ToArray())
+                });
+            }
+            builder.Entity<User>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.Property(e => e.Name).IsRequired(false).HasMaxLength(50);
+                e.HasData(users);
             });
-
-            builder.Entity<Category>(entity =>
-           {
-               entity.Property(x => x.Id).UseIdentityColumn();
-           });
-            builder.Entity<ProductTag>(entity =>
-           {
-               entity.Property(x => x.Id).UseIdentityColumn();
-               entity.HasIndex(x => new { x.ProductId, x.TagId }).IsUnique();
-               entity.HasOne<Product>(x => x.Product).WithMany(x => x.ProductTags).HasForeignKey(x => x.ProductId);
-               entity.HasOne<Tag>(x => x.Tag).WithMany(x => x.ProductTags).HasForeignKey(x => x.TagId);
-           });
         }
 
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<ProductTag> ProductTags { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
